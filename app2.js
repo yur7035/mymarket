@@ -11,9 +11,7 @@ const app = express();
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 // MongoDB 연결
-mongoose.connect(
-  'mongodb+srv://yura7035:1234@cluster0.t14rvot.mongodb.net/mymarket?retryWrites=true&w=majority&appName=Cluster0'
-)
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log('MongoDB 연결 성공'))
 .catch(err => console.log(err));
 
