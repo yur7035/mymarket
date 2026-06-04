@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+
+<h2>상품 등록</h2>
+
+<form action="/items/write" method="POST" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label>제목</label>
+    <input type="text" name="title" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label>가격</label>
+    <input type="number" name="price" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label>이미지 파일</label>
+    <input type="file" name="image" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label>설명</label>
+    <textarea name="description" class="form-control"></textarea>
+  </div>
+
+  <button class="btn btn-primary">등록</button>
+</form>
+
+<%- include('../partials/footer') %>

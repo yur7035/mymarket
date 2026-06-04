@@ -1,0 +1,21 @@
+<%- include('../partials/header') %>
+
+<h2><%= item.title %></h2>
+
+<% if (item.image) { %>
+  <img src="<%= item.image %>" class="img-fluid mb-3">
+<% } %>
+
+<p>가격: <%= item.price %>원</p>
+<p><%= item.description %></p>
+
+<a href="/items" class="btn btn-secondary">목록으로</a>
+
+<% if (user && user.userId === item.userId) { %>
+  <a href="/items/edit/<%= item._id %>" class="btn btn-warning">수정</a>
+  <form action="/items/delete/<%= item._id %>" method="POST" style="display:inline;">
+    <button class="btn btn-danger">삭제</button>
+  </form>
+<% } %>
+
+<%- include('../partials/footer') %>

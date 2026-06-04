@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+
+<h2 class="mb-4">상품 목록</h2>
+
+<div class="row">
+  <% items.forEach(item => { %>
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <% if (item.image) { %>
+          <img src="<%= item.image %>" class="card-img-top" style="height:200px; object-fit:cover;">
+        <% } else { %>
+          <div class="bg-secondary text-white text-center py-5">이미지 없음</div>
+        <% } %>
+
+        <div class="card-body">
+          <h5 class="card-title"><%= item.title %></h5>
+          <p class="card-text"><%= item.price %>원</p>
+          <p class="text-muted small">판매자: <%= item.userId %></p>
+
+          <a href="/items/<%= item._id %>" class="btn btn-primary">
+            상세보기
+          </a>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<%- include('../partials/footer') %>
