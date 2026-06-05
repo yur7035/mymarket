@@ -4,6 +4,11 @@ const multer = require('multer');
 const path = require('path');
 const Item = require('../models/Item');
 
+const fs = require('fs');
+if (!fs.existsSync('public/uploads')) {
+  fs.mkdirSync('public/uploads', { recursive: true });
+}
+
 // multer 설정 (이미지 업로드)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'public/uploads/'),
