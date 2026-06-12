@@ -33,40 +33,8 @@ const docStorage = multer.diskStorage({
 });
 
 const upload = multer({
-  storage: docStorage
-});
-
-const imageUpload = multer({
   storage: imageStorage
 });
-
-// 문서 파일 동시 업로드
-const uploadFields = (req, res, next) => {
-
-  imageUpload.single('image')(req, res, (err) => {
-
-    if (err) return next(err);
-
-    upload.single('docFile')(req, res, (err2) => {
-
-      if (err2) return next(err2);
-
-      const files = {};
-
-      if (req.file) {
-        files.docFile = [req.file];
-      }
-
-      if (req.files) {
-        Object.assign(files, req.files);
-      }
-
-      req.files = files;
-
-      next();
-    });
-  });
-};
 
 // 로그인 체크 미들웨어
 function loginCheck(req, res, next) {
@@ -116,37 +84,15 @@ router.get('/write', loginCheck, (req, res) => {
 });
 
 // 상품 등록 처리
-router.post('/write', loginCheck, uploadFields, async (req, res) => {
+router.post('/write', loginCheck, upload.single('image'), async (req, res) => {
 
   console.log('업로드 파일:', req.files);
 
   let { title, price, description } = req.body;
 
-  const image = req.files?.image
-    ? req.files.image[0].path
-    : null;
-
-  // txt 문서 첨부 처리
-  if (req.files?.docFile) {
-
-    const docPath = path.join(
-      uploadDir,
-      req.files.docFile[0].filename
-    );
-
-    try {
-      const docContent = fs.readFileSync(docPath, 'utf-8');
-
-      description = description
-        ? description + '\n\n[첨부 문서 내용]\n' + docContent
-        : '[첨부 문서 내용]\n' + docContent;
-
-      fs.unlinkSync(docPath);
-
-    } catch (e) {
-      console.error('문서 읽기 오류:', e);
-    }
-  }
+  const image = req.file
+    ? req.file.path
+   : null;
 
   await Item.create({
     userId: req.session.user.userId,
@@ -172,7 +118,7 @@ router.get('/edit/:id', loginCheck, async (req, res) => {
 });
 
 // 상품 수정 처리
-router.post('/edit/:id', loginCheck, uploadFields, async (req, res) => {
+router.post('/edit/:id', loginCheck, upload.single('image'), async (req, res) => {
 
   const item = await Item.findById(req.params.id);
 
@@ -188,8 +134,8 @@ router.post('/edit/:id', loginCheck, uploadFields, async (req, res) => {
     description
   };
 
-  if (req.files?.image) {
-    update.image = req.files.image[0].path;
+  if (req.file) {
+    update.image = req.file.path;
   }
 
   if (req.files?.docFile) {
