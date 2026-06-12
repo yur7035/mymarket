@@ -14,11 +14,11 @@
 
     <div>
       <% if (user) { %>
-        <a href="/items/write" class="btn btn-sm btn-success me-2">상품 등록</a>
         <a href="/users/friends" class="btn btn-sm btn-info me-2">친구</a>
+        <a href="/items/write" class="btn btn-sm btn-success me-2">상품 등록</a>
         <span class="text-white me-3">👤 <%= user.userId %></span>
         <a href="/users/logout" class="btn btn-sm btn-outline-light">로그아웃</a>
-      <% } else { %>
+      <% } else { %>  
         <a href="/users/login" class="btn btn-sm btn-outline-light">로그인</a>
       <% } %>
     </div>
