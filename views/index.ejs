@@ -8,9 +8,9 @@
       <div class="col-md-4">
         <div class="card mb-3 border-primary">
           <% if (item.image) { %>
-            <img src="<%= item.image %>" class="card-img-top" style="height:180px; object-fit:cover;">
+            <img src="<%= item.image %>" class="card-img-top" style="height:140px; object-fit:cover;">
           <% } else { %>
-            <div class="bg-secondary text-center py-4">이미지 없음</div>
+            <div class="bg-secondary text-center py-3">이미지 없음</div>
           <% } %>
           <div class="card-body">
             <p class="card-title-line"><%= item.title %></p>
@@ -36,9 +36,9 @@
     <div class="col-md-4">
       <div class="card mb-4">
         <% if (item.image) { %>
-          <img src="<%= item.image %>" class="card-img-top" style="height:200px; object-fit:cover;">
+          <img src="<%= item.image %>" class="card-img-top" style="height:150px; object-fit:cover;">
         <% } else { %>
-          <div class="bg-secondary text-center py-5">이미지 없음</div>
+          <div class="bg-secondary text-center py-3">이미지 없음</div>
         <% } %>
 
         <div class="card-body">
