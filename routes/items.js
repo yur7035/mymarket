@@ -37,10 +37,10 @@ function loginCheck(req, res, next) {
   next();
 }
 
-// 전체 상품 목록 + 친구 최신 상품 3개
+// 전체 상품 목록 + 친구 최신 상품 3개 + 내 상품 목록
 router.get('/', async (req, res) => {
   if (!req.session.user) return res.redirect('/users/login');
-  
+
   const items = await Item.find().sort({ createdAt: -1 });
   let friendItems = [];
 
@@ -63,7 +63,12 @@ router.get('/', async (req, res) => {
     }
   }
 
-  res.render('index', { items, friendItems });
+  let myItems = [];
+  if (req.session.user) {
+    myItems = await Item.find({ userId: req.session.user.userId }).sort({ createdAt: -1 });
+  }
+
+  res.render('index', { items, friendItems, myItems });
 });
 
 // 상품 등록 폼

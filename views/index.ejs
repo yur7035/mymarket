@@ -1,35 +1,10 @@
 <%- include('partials/header') %>
 
-<% if (user && friendItems && friendItems.length > 0) { %>
-<div class="mb-5">
-  <h4 class="mb-3">친구의 최신 판매 상품</h4>
-  <div class="row">
-    <% friendItems.forEach(item => { %>
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="card mb-3 border-primary">
-          <% if (item.image) { %>
-            <img src="<%= item.image %>" class="card-img-top" style="aspect-ratio: 1/1; width:100%; object-fit:cover;">
-          <% } else { %>
-            <div class="bg-secondary text-center py-3">이미지 없음</div>
-          <% } %>
-          <div class="card-body">
-            <p class="card-title-line"><%= item.title %></p>
-            <p class="card-price-line"><%= item.price.toLocaleString() %>원</p>
-            <div class="card-meta-row mb-2">
-              <span class="card-meta-time">판매자: <%= item.userId %></span>
-              <span class="card-friend-tag">친구</span>
-            </div>
-            <a href="/items/<%= item._id %>" class="btn btn-sm btn-outline-primary w-100">상세보기</a>
-          </div>
-        </div>
-      </div>
-    <% }) %>
-  </div>
-  <hr>
-</div>
-<% } %>
+<h2 class="mb-3">전체 상품 목록</h2>
 
-<h2 class="mb-4">상품 목록</h2>
+<% if (user && friendItems && friendItems.length > 0) { %>
+<p class="text-muted mb-3" style="font-size:0.85rem;">친구가 등록한 상품은 "친구" 표시로 구분됩니다.</p>
+<% } %>
 
 <div class="row">
   <% items.forEach(item => { %>
@@ -46,6 +21,41 @@
           <p class="card-price-line"><%= item.price.toLocaleString() %>원</p>
           <div class="card-meta-row mb-2">
             <span class="card-meta-time">판매자: <%= item.userId %></span>
+            <% if (user && friendItems && friendItems.some(f => f.userId === item.userId)) { %>
+              <span class="card-friend-tag">친구</span>
+            <% } else { %>
+              <span class="card-meta-time"><%= new Date(item.createdAt).toLocaleDateString('ko-KR') %></span>
+            <% } %>
+          </div>
+          <a href="/items/<%= item._id %>" class="btn btn-primary w-100">상세보기</a>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<% if (user) { %>
+<hr class="my-5">
+
+<h2 class="mb-3">내 상품 목록</h2>
+
+<% if (myItems.length === 0) { %>
+  <p class="text-muted">등록한 상품이 없습니다.</p>
+<% } else { %>
+<div class="row">
+  <% myItems.forEach(item => { %>
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card mb-4">
+        <% if (item.image) { %>
+          <img src="<%= item.image %>" class="card-img-top" style="aspect-ratio: 1/1; width:100%; object-fit:cover;">
+        <% } else { %>
+          <div class="bg-secondary text-center py-3">이미지 없음</div>
+        <% } %>
+
+        <div class="card-body">
+          <p class="card-title-line"><%= item.title %></p>
+          <p class="card-price-line"><%= item.price.toLocaleString() %>원</p>
+          <div class="card-meta-row mb-2">
             <span class="card-meta-time"><%= new Date(item.createdAt).toLocaleDateString('ko-KR') %></span>
           </div>
           <a href="/items/<%= item._id %>" class="btn btn-primary w-100">상세보기</a>
@@ -54,5 +64,7 @@
     </div>
   <% }) %>
 </div>
+<% } %>
+<% } %>
 
 <%- include('partials/footer') %>
