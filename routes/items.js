@@ -6,38 +6,31 @@ const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-const imageStorage = new CloudinaryStorage({
+// 필드명(image/document)에 따라 다른 Cloudinary 설정을 적용하는 단일 storage
+const combinedStorage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: 'mymarket-images',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp']
+  params: (req, file) => {
+    if (file.fieldname === 'document') {
+      return {
+        folder: 'mymarket-documents',
+        resource_type: 'raw',
+        allowed_formats: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'zip']
+      };
+    }
+    return {
+      folder: 'mymarket-images',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp']
+    };
   }
 });
 
-const documentStorage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'mymarket-documents',
-    resource_type: 'raw',
-    allowed_formats: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'zip']
-  }
-});
-
-const upload = multer({
-  storage: multer.memoryStorage()
-});
-
-// 이미지 / 문서 각각 다른 storage로 처리하기 위한 multer 인스턴스
-const imageUpload = multer({ storage: imageStorage });
-const documentUpload = multer({ storage: documentStorage });
+const upload = multer({ storage: combinedStorage });
 
 // 이미지 + 문서 동시 업로드 처리
-const uploadFields = (req, res, next) => {
-  imageUpload.fields([{ name: 'image', maxCount: 1 }])(req, res, (err) => {
-    if (err) return next(err);
-    documentUpload.fields([{ name: 'document', maxCount: 1 }])(req, res, next);
-  });
-};
+const uploadFields = upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'document', maxCount: 1 }
+]);
 
 // 로그인 체크
 function loginCheck(req, res, next) {
