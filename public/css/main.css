@@ -1,12 +1,14 @@
 /* ===== MyMarket 공용 스타일 (모노톤) ===== */
 
 :root {
-  --color-black: #3a3a3a;
-  --color-dark: #4a4a4a;
+  --color-black: #4a4a4a;
+  --color-dark: #333333;
   --color-gray-700: #6b6b6b;
   --color-gray-500: #9a9a9a;
-  --color-gray-300: #e2e2e2;
+  --color-gray-300: #d4d4d4;
   --color-gray-100: #f5f5f5;
+  --color-navbar: #ececec;
+  --color-navbar-text: #333333;
   --color-white: #ffffff;
   --radius: 12px;
 }
@@ -19,14 +21,16 @@ body {
 
 /* ----- 네비게이션 바 ----- */
 .navbar.bg-dark {
-  background: var(--color-black) !important;
+  background: var(--color-navbar) !important;
   padding-top: 18px;
   padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-gray-300);
 }
 
 .navbar-brand {
   font-weight: 700;
   letter-spacing: 0.5px;
+  color: var(--color-navbar-text) !important;
 }
 
 .navbar .btn {
@@ -37,13 +41,39 @@ body {
 .navbar .btn-info {
   background: transparent;
   border: 1px solid var(--color-gray-300);
-  color: var(--color-white);
+  color: var(--color-navbar-text);
 }
 
 .navbar .btn-success:hover,
 .navbar .btn-info:hover {
-  background: var(--color-gray-700);
-  border-color: var(--color-gray-700);
+  background: var(--color-gray-300);
+}
+
+.navbar .btn-outline-light {
+  color: var(--color-navbar-text);
+  border-color: var(--color-gray-300);
+}
+
+.navbar .btn-outline-light:hover {
+  background: var(--color-gray-300);
+  color: var(--color-navbar-text);
+}
+
+.user-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-navbar-text);
+  font-size: 14px;
+  cursor: pointer;
+  background: rgba(0,0,0,0.05);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+.user-menu-trigger:hover {
+  background: rgba(0,0,0,0.1);
 }
 
 /* ----- 카드 (상품 목록) ----- */
@@ -62,10 +92,18 @@ body {
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
+.card-body {
+  padding: 8px 10px;
+}
+
 .card .bg-secondary {
   background: var(--color-gray-100) !important;
   color: var(--color-gray-500) !important;
   border-radius: var(--radius) var(--radius) 0 0;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-title {
@@ -75,17 +113,17 @@ body {
 
 .card-title-line {
   font-weight: 500;
-  font-size: 0.95rem;
-  margin: 0 0 4px;
+  font-size: 0.8rem;
+  margin: 0 0 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .card-price-line {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 4px;
 }
 
 .card-meta-row {
@@ -95,18 +133,27 @@ body {
 }
 
 .card-meta-time {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--color-gray-500);
 }
 
 .card-friend-tag {
   display: inline-flex;
   align-items: center;
-  font-size: 0.7rem;
-  padding: 2px 8px;
+  font-size: 0.6rem;
+  padding: 1px 6px;
   border-radius: 6px;
   background: var(--color-gray-100);
   color: var(--color-gray-700);
+}
+
+.card-body .btn {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+.row {
+  --bs-gutter-x: 0.75rem;
 }
 
 .card-text {
@@ -235,17 +282,42 @@ label {
 
 /* ----- 폼 카드 (등록/수정) ----- */
 .form-card {
-  max-width: 560px;
+  max-width: 440px;
   margin: 0 auto;
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius);
-  padding: 32px;
+  padding: 24px;
 }
 
 .form-card h2 {
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+}
+
+.form-card .mb-3 {
+  margin-bottom: 14px !important;
+}
+
+.form-card label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.form-card .form-control {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+.form-card textarea.form-control {
+  min-height: 100px;
+}
+
+.form-card .btn {
+  padding: 8px;
+  font-size: 0.95rem;
 }
 
 /* ----- 친구 목록 ----- */
@@ -259,4 +331,108 @@ label {
 footer.bg-light {
   background: var(--color-gray-100) !important;
   color: var(--color-gray-500);
+}
+
+/* 페이지 제목 */
+h2.mb-4 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-black);
+  letter-spacing: -0.01em;
+}
+
+/* ----- 사이드 메뉴 패널 ----- */
+.side-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+  z-index: 1040;
+}
+
+.side-panel-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 240px;
+  background: var(--color-white);
+  border-left: 1px solid var(--color-gray-300);
+  box-shadow: -4px 0 12px rgba(0,0,0,0.08);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-panel.open {
+  transform: translateX(0);
+}
+
+.side-panel-profile {
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--color-gray-300);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.side-panel-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.side-panel-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.side-panel-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-gray-500);
+}
+
+.side-panel-menu {
+  padding: 8px;
+}
+
+.side-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--color-black);
+  text-decoration: none;
+}
+
+.side-panel-item:hover {
+  background: var(--color-gray-100);
+}
+
+.side-panel-divider {
+  height: 1px;
+  background: var(--color-gray-300);
+  margin: 8px 4px;
+}
+
+.side-panel-item.danger {
+  color: #c0392b;
 }
