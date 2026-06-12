@@ -1,35 +1,37 @@
 <%- include('partials/header') %>
 
-<h2>상품 수정</h2>
+<div class="form-card">
+  <h2>상품 수정</h2>
 
-<form action="/items/edit/<%= item._id %>" method="POST" enctype="multipart/form-data">
-  <div class="mb-3">
-    <label>제목</label>
-    <input type="text" name="title" value="<%= item.title %>" class="form-control">
-  </div>
+  <form action="/items/edit/<%= item._id %>" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label>제목</label>
+      <input type="text" name="title" value="<%= item.title %>" class="form-control" required>
+    </div>
 
-  <div class="mb-3">
-    <label>가격</label>
-    <input type="number" name="price" value="<%= item.price %>" class="form-control">
-  </div>
+    <div class="mb-3">
+      <label>가격</label>
+      <input type="number" name="price" value="<%= item.price %>" class="form-control" required>
+    </div>
 
-  <div class="mb-3">
-    <label>이미지 파일 (새로 올리면 교체됩니다)</label>
-    <% if (item.image) { %>
-      <div class="mb-1">
-        <img src="<%= item.image %>" style="max-height:120px;" class="img-thumbnail">
-        <small class="text-muted ms-2">현재 이미지</small>
-      </div>
-    <% } %>
-    <input type="file" name="image" class="form-control">
-  </div>
+    <div class="mb-3">
+      <label>이미지 파일 (새로 올리면 교체됩니다)</label>
+      <% if (item.image) { %>
+        <div class="mb-2">
+          <img src="<%= item.image %>" style="max-height:120px;" class="img-thumbnail">
+          <small class="text-muted ms-2">현재 이미지</small>
+        </div>
+      <% } %>
+      <input type="file" name="image" class="form-control">
+    </div>
 
-  <div class="mb-3">
-    <label>설명</label>
-    <textarea name="description" class="form-control"><%= item.description %></textarea>
-  </div>
+    <div class="mb-3">
+      <label>설명</label>
+      <textarea name="description" class="form-control" rows="5"><%= item.description %></textarea>
+    </div>
 
-  <button class="btn btn-warning">수정</button>
-</form>
+    <button class="btn btn-warning w-100">수정</button>
+  </form>
+</div>
 
 <%- include('partials/footer') %>
