@@ -7,6 +7,7 @@
 </head>
 <body>
 
+<% if (typeof hideNav === 'undefined' || !hideNav) { %>
 <nav class="navbar navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand" href="/items">MyMarket</a>
@@ -24,5 +25,6 @@
     </div>
   </div>
 </nav>
+<% } %>
 
 <div class="container mt-4">
