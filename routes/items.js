@@ -6,21 +6,23 @@ const fs = require('fs');
 const Item = require('../models/Item');
 const User = require('../models/User');
 
-if (!fs.existsSync('public/uploads')) {
-  fs.mkdirSync('public/uploads', { recursive: true });
+// 절대 경로 사용
+const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// multer 설정: 이미지 + txt 파일 모두 허용
+// multer 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.fieldname === 'docFile') {
-      cb(null, 'public/uploads/');
-    } else {
-      cb(null, 'public/uploads/');
-    }
+    cb(null, uploadDir);
   },
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
 });
+
 const upload = multer({ storage });
 
 // 이미지 + 문서 파일 동시 업로드
@@ -40,10 +42,11 @@ router.get('/', async (req, res) => {
   const items = await Item.find().sort({ createdAt: -1 });
 
   let friendItems = [];
+
   if (req.session.user) {
     const me = await User.findOne({ userId: req.session.user.userId });
+
     if (me && me.friends && me.friends.length > 0) {
-      // 가장 최근에 추가된 친구 순으로 정렬
       const friendPairs = me.friends.map((id, i) => ({
         userId: id,
         addedAt: me.friendAddedAt[i] || new Date(0)
@@ -51,10 +54,11 @@ router.get('/', async (req, res) => {
 
       const recentFriendIds = friendPairs.map(f => f.userId);
 
-      // 친구들의 상품을 최신순으로 3개 가져오기
-      friendItems = await Item.find({ userId: { $in: recentFriendIds } })
-        .sort({ createdAt: -1 })
-        .limit(3);
+      friendItems = await Item.find({
+        userId: { $in: recentFriendIds }
+      })
+      .sort({ createdAt: -1 })
+      .limit(3);
     }
   }
 
@@ -68,77 +72,123 @@ router.get('/write', loginCheck, (req, res) => {
 
 // 상품 등록 처리
 router.post('/write', loginCheck, uploadFields, async (req, res) => {
-  let { title, price, description } = req.body;
-  const image = req.files['image'] ? '/uploads/' + req.files['image'][0].filename : null;
 
-  // txt 문서 첨부 처리: 파일 내용을 description에 추가
-  if (req.files['docFile']) {
-    const docPath = 'public/uploads/' + req.files['docFile'][0].filename;
+  console.log('업로드 파일:', req.files);
+
+  let { title, price, description } = req.body;
+
+  const image = req.files?.image
+    ? '/uploads/' + req.files.image[0].filename
+    : null;
+
+  // txt 문서 첨부 처리
+  if (req.files?.docFile) {
+
+    const docPath = path.join(
+      uploadDir,
+      req.files.docFile[0].filename
+    );
+
     try {
       const docContent = fs.readFileSync(docPath, 'utf-8');
+
       description = description
         ? description + '\n\n[첨부 문서 내용]\n' + docContent
         : '[첨부 문서 내용]\n' + docContent;
-      fs.unlinkSync(docPath); // 임시 파일 삭제
+
+      fs.unlinkSync(docPath);
+
     } catch (e) {
       console.error('문서 읽기 오류:', e);
     }
   }
 
-  await Item.create({ userId: req.session.user.userId, title, price, description, image });
+  await Item.create({
+    userId: req.session.user.userId,
+    title,
+    price,
+    description,
+    image
+  });
+
   res.redirect('/items');
 });
 
 // 상품 수정 폼
 router.get('/edit/:id', loginCheck, async (req, res) => {
+
   const item = await Item.findById(req.params.id);
+
   if (item.userId !== req.session.user.userId) {
     return res.status(403).send('본인 상품만 수정할 수 있습니다.');
   }
+
   res.render('edit', { item });
 });
 
 // 상품 수정 처리
 router.post('/edit/:id', loginCheck, uploadFields, async (req, res) => {
+
   const item = await Item.findById(req.params.id);
+
   if (item.userId !== req.session.user.userId) {
     return res.status(403).send('본인 상품만 수정할 수 있습니다.');
   }
 
   let { title, price, description } = req.body;
-  const update = { title, price, description };
 
-  if (req.files['image']) update.image = '/uploads/' + req.files['image'][0].filename;
+  const update = {
+    title,
+    price,
+    description
+  };
 
-  // txt 문서 첨부 처리
-  if (req.files['docFile']) {
-    const docPath = 'public/uploads/' + req.files['docFile'][0].filename;
+  if (req.files?.image) {
+    update.image = '/uploads/' + req.files.image[0].filename;
+  }
+
+  if (req.files?.docFile) {
+
+    const docPath = path.join(
+      uploadDir,
+      req.files.docFile[0].filename
+    );
+
     try {
+
       const docContent = fs.readFileSync(docPath, 'utf-8');
+
       update.description = description
         ? description + '\n\n[첨부 문서 내용]\n' + docContent
         : '[첨부 문서 내용]\n' + docContent;
+
       fs.unlinkSync(docPath);
+
     } catch (e) {
       console.error('문서 읽기 오류:', e);
     }
   }
 
   await Item.findByIdAndUpdate(req.params.id, update);
+
   res.redirect('/items/' + req.params.id);
 });
 
 // 상품 삭제
 router.post('/delete/:id', loginCheck, async (req, res) => {
+
   const item = await Item.findById(req.params.id);
+
   if (item.userId !== req.session.user.userId) {
     return res.status(403).send('본인 상품만 삭제할 수 있습니다.');
   }
+
   await Item.findByIdAndDelete(req.params.id);
+
   res.redirect('/items');
 });
 
-// 상품 상세 (반드시 마지막)
+// 상품 상세
 router.get('/:id', async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render('detail', { item });
