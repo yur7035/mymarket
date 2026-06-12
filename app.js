@@ -40,9 +40,13 @@ app.use((req, res, next) => {
 app.use('/users', usersRouter);
 app.use('/items', itemsRouter);
 
-// 시작 페이지 → 상품 목록으로 이동
+// 시작 페이지 → 로그인 여부에 따라 이동
 app.get('/', (req, res) => {
-  res.redirect('/items');
+  if (req.session.user) {
+    res.redirect('/items');
+  } else {
+    res.redirect('/users/login');
+  }
 });
 
 const PORT = process.env.PORT || 9930;
