@@ -5,10 +5,10 @@
   <h4 class="mb-3">친구의 최신 판매 상품</h4>
   <div class="row">
     <% friendItems.forEach(item => { %>
-      <div class="col-md-4">
+      <div class="col-6 col-md-4 col-lg-3">
         <div class="card mb-3 border-primary">
           <% if (item.image) { %>
-            <img src="<%= item.image %>" class="card-img-top" style="height:140px; object-fit:cover;">
+            <img src="<%= item.image %>" class="card-img-top" style="aspect-ratio: 1/1; width:100%; object-fit:cover;">
           <% } else { %>
             <div class="bg-secondary text-center py-3">이미지 없음</div>
           <% } %>
@@ -33,7 +33,7 @@
 
 <div class="row">
   <% items.forEach(item => { %>
-    <div class="col-md-4">
+    <div class="col-6 col-md-4 col-lg-3">
       <div class="card mb-4">
         <% if (item.image) { %>
           <img src="<%= item.image %>" class="card-img-top" style="aspect-ratio: 1/1; width:100%; object-fit:cover;">
