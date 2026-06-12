@@ -5,6 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const Item = require('../models/Item');
 const User = require('../models/User');
+const cloudinary = require('../config/cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // 절대 경로 사용
 const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
@@ -13,8 +15,15 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// multer 설정
-const storage = multer.diskStorage({
+const imageStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'mymarket-images',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp']
+  }
+});
+
+const docStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
@@ -23,13 +32,41 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage: docStorage
+});
 
-// 이미지 + 문서 파일 동시 업로드
-const uploadFields = upload.fields([
-  { name: 'image', maxCount: 1 },
-  { name: 'docFile', maxCount: 1 }
-]);
+const imageUpload = multer({
+  storage: imageStorage
+});
+
+// 문서 파일 동시 업로드
+const uploadFields = (req, res, next) => {
+
+  imageUpload.single('image')(req, res, (err) => {
+
+    if (err) return next(err);
+
+    upload.single('docFile')(req, res, (err2) => {
+
+      if (err2) return next(err2);
+
+      const files = {};
+
+      if (req.file) {
+        files.docFile = [req.file];
+      }
+
+      if (req.files) {
+        Object.assign(files, req.files);
+      }
+
+      req.files = files;
+
+      next();
+    });
+  });
+};
 
 // 로그인 체크 미들웨어
 function loginCheck(req, res, next) {
@@ -37,11 +74,10 @@ function loginCheck(req, res, next) {
   next();
 }
 
-// 전체 상품 목록 + 친구 최신 상품 3개 + 내 상품 목록
+// 전체 상품 목록 + 친구 최신 상품 3개
 router.get('/', async (req, res) => {
-  if (!req.session.user) return res.redirect('/users/login');
-
   const items = await Item.find().sort({ createdAt: -1 });
+
   let friendItems = [];
 
   if (req.session.user) {
@@ -63,12 +99,7 @@ router.get('/', async (req, res) => {
     }
   }
 
-  let myItems = [];
-  if (req.session.user) {
-    myItems = await Item.find({ userId: req.session.user.userId }).sort({ createdAt: -1 });
-  }
-
-  res.render('index', { items, friendItems, myItems });
+  res.render('index', { items, friendItems });
 });
 
 // 상품 등록 폼
@@ -84,7 +115,7 @@ router.post('/write', loginCheck, uploadFields, async (req, res) => {
   let { title, price, description } = req.body;
 
   const image = req.files?.image
-    ? '/uploads/' + req.files.image[0].filename
+    ? req.files.image[0].path
     : null;
 
   // txt 문서 첨부 처리
@@ -150,7 +181,7 @@ router.post('/edit/:id', loginCheck, uploadFields, async (req, res) => {
   };
 
   if (req.files?.image) {
-    update.image = '/uploads/' + req.files.image[0].filename;
+    update.image = req.files.image[0].path;
   }
 
   if (req.files?.docFile) {
