@@ -1,12 +1,14 @@
 /* ===== MyMarket 공용 스타일 (모노톤) ===== */
 
 :root {
-  --color-black: #3a3a3a;
-  --color-dark: #4a4a4a;
+  --color-black: #4a4a4a;
+  --color-dark: #333333;
   --color-gray-700: #6b6b6b;
   --color-gray-500: #9a9a9a;
-  --color-gray-300: #e2e2e2;
+  --color-gray-300: #d4d4d4;
   --color-gray-100: #f5f5f5;
+  --color-navbar: #ececec;
+  --color-navbar-text: #333333;
   --color-white: #ffffff;
   --radius: 12px;
 }
@@ -19,14 +21,16 @@ body {
 
 /* ----- 네비게이션 바 ----- */
 .navbar.bg-dark {
-  background: var(--color-black) !important;
+  background: var(--color-navbar) !important;
   padding-top: 18px;
   padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-gray-300);
 }
 
 .navbar-brand {
   font-weight: 700;
   letter-spacing: 0.5px;
+  color: var(--color-navbar-text) !important;
 }
 
 .navbar .btn {
@@ -37,13 +41,39 @@ body {
 .navbar .btn-info {
   background: transparent;
   border: 1px solid var(--color-gray-300);
-  color: var(--color-white);
+  color: var(--color-navbar-text);
 }
 
 .navbar .btn-success:hover,
 .navbar .btn-info:hover {
-  background: var(--color-gray-700);
-  border-color: var(--color-gray-700);
+  background: var(--color-gray-300);
+}
+
+.navbar .btn-outline-light {
+  color: var(--color-navbar-text);
+  border-color: var(--color-gray-300);
+}
+
+.navbar .btn-outline-light:hover {
+  background: var(--color-gray-300);
+  color: var(--color-navbar-text);
+}
+
+.user-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-navbar-text);
+  font-size: 14px;
+  cursor: pointer;
+  background: rgba(0,0,0,0.05);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+.user-menu-trigger:hover {
+  background: rgba(0,0,0,0.1);
 }
 
 /* ----- 카드 (상품 목록) ----- */
@@ -299,23 +329,6 @@ h2.mb-4 {
 }
 
 /* ----- 사이드 메뉴 패널 ----- */
-.user-menu-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  background: rgba(255,255,255,0.08);
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-}
-
-.user-menu-trigger:hover {
-  background: rgba(255,255,255,0.16);
-}
-
 .side-panel-overlay {
   position: fixed;
   inset: 0;
