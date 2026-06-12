@@ -17,9 +17,25 @@ if (!fs.existsSync(uploadDir)) {
 
 const imageStorage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: 'mymarket-images',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp']
+  params: async (req, file) => {
+
+    if (file.fieldname === 'document') {
+      return {
+        folder: 'mymarket-documents',
+        resource_type: 'raw'
+      };
+    }
+
+    return {
+      folder: 'mymarket-images',
+      allowed_formats: [
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+        'webp'
+      ]
+    };
   }
 });
 
@@ -35,6 +51,11 @@ const docStorage = multer.diskStorage({
 const upload = multer({
   storage: imageStorage
 });
+
+const uploadFields = upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'document', maxCount: 1 }
+]);
 
 // 로그인 체크 미들웨어
 function loginCheck(req, res, next) {
@@ -84,22 +105,27 @@ router.get('/write', loginCheck, (req, res) => {
 });
 
 // 상품 등록 처리
-router.post('/write', loginCheck, upload.single('image'), async (req, res) => {
+router.post('/write', loginCheck, uploadFields, async (req, res) => {
 
   console.log('업로드 파일:', req.files);
 
   let { title, price, description } = req.body;
 
-  const image = req.file
-    ? req.file.path
-   : null;
+  const image = req.files?.image
+    ? req.files.image[0].path
+    : null;
+
+  const document = req.files?.document
+    ? req.files.document[0].path
+    : null;
 
   await Item.create({
     userId: req.session.user.userId,
     title,
     price,
     description,
-    image
+    image,
+    document
   });
 
   res.redirect('/items');
@@ -118,7 +144,7 @@ router.get('/edit/:id', loginCheck, async (req, res) => {
 });
 
 // 상품 수정 처리
-router.post('/edit/:id', loginCheck, upload.single('image'), async (req, res) => {
+router.post('/edit/:id', loginCheck, uploadFields, async (req, res) => {
 
   const item = await Item.findById(req.params.id);
 
@@ -134,8 +160,12 @@ router.post('/edit/:id', loginCheck, upload.single('image'), async (req, res) =>
     description
   };
 
-  if (req.file) {
-    update.image = req.file.path;
+  if (req.files?.image) {
+    update.image = req.files.image[0].path;
+  }
+
+  if (req.files?.document) {
+    update.document = req.files.document[0].path;
   }
 
   if (req.files?.docFile) {
