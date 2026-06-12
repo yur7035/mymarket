@@ -1,11 +1,11 @@
 /* ===== MyMarket 공용 스타일 (모노톤) ===== */
 
 :root {
-  --color-black: #1a1a1a;
-  --color-dark: #2b2b2b;
-  --color-gray-700: #495057;
-  --color-gray-500: #868e96;
-  --color-gray-300: #dee2e6;
+  --color-black: #3a3a3a;
+  --color-dark: #4a4a4a;
+  --color-gray-700: #6b6b6b;
+  --color-gray-500: #9a9a9a;
+  --color-gray-300: #e2e2e2;
   --color-gray-100: #f5f5f5;
   --color-white: #ffffff;
   --radius: 12px;
@@ -20,6 +20,8 @@ body {
 /* ----- 네비게이션 바 ----- */
 .navbar.bg-dark {
   background: var(--color-black) !important;
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
 
 .navbar-brand {
@@ -69,6 +71,42 @@ body {
 .card-title {
   font-weight: 600;
   color: var(--color-black);
+}
+
+.card-title-line {
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-price-line {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-meta-time {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+.card-friend-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
 }
 
 .card-text {
