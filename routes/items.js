@@ -39,8 +39,9 @@ function loginCheck(req, res, next) {
 
 // 전체 상품 목록 + 친구 최신 상품 3개
 router.get('/', async (req, res) => {
+  if (!req.session.user) return res.redirect('/users/login');
+  
   const items = await Item.find().sort({ createdAt: -1 });
-
   let friendItems = [];
 
   if (req.session.user) {
