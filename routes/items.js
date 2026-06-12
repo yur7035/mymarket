@@ -36,9 +36,24 @@ async function uploadImageIfExists(req) {
 
 async function uploadDocumentIfExists(req) {
   if (req.files && req.files.document && req.files.document[0]) {
-    const result = await uploadToCloudinary(req.files.document[0], {
+    const file = req.files.document[0];
+
+    // 확장자 분리 (예: report.pdf -> base=report, ext=pdf)
+    const originalName = file.originalname;
+    const lastDot = originalName.lastIndexOf('.');
+    const base = lastDot > -1 ? originalName.slice(0, lastDot) : originalName;
+    const ext = lastDot > -1 ? originalName.slice(lastDot + 1) : '';
+
+    // Cloudinary public_id로 쓸 수 없는 문자 제거 + 중복 방지용 타임스탬프
+    const safeBase = base.replace(/[^a-zA-Z0-9가-힣_-]/g, '_');
+    const publicId = `${safeBase}_${Date.now()}`;
+
+    const result = await uploadToCloudinary(file, {
       folder: 'mymarket-documents',
-      resource_type: 'raw'
+      resource_type: 'raw',
+      type: 'upload',
+      public_id: publicId,
+      format: ext || undefined
     });
     return result.secure_url;
   }

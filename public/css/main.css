@@ -264,13 +264,13 @@ label {
 
 /* ----- 상세 페이지 ----- */
 .detail-title {
-  font-size: 0.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .detail-price {
-  font-size: 0.65rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--color-black);
 }
@@ -282,7 +282,7 @@ label {
 
 .detail-meta {
   color: var(--color-gray-500);
-  font-size: 0.45rem;
+  font-size: 0.9rem;
 }
 
 /* ----- 폼 카드 (등록/수정) ----- */
