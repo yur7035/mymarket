@@ -53,6 +53,13 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 9930;
+// 전역 에러 핸들러
+app.use((err, req, res, next) => {
+  console.error('=== 전역 에러 핸들러 ===');
+  console.error(err);
+  res.status(500).send('서버 에러: ' + (err && err.message));
+});
+
 app.listen(PORT, () => {
   console.log(`서버 실행 중: http://localhost:${PORT}`);
 });

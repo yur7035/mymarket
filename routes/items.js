@@ -4,33 +4,46 @@ const multer = require('multer');
 const Item = require('../models/Item');
 const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// 필드명(image/document)에 따라 다른 Cloudinary 설정을 적용하는 단일 storage
-const combinedStorage = new CloudinaryStorage({
-  cloudinary,
-  params: (req, file) => {
-    if (file.fieldname === 'document') {
-      return {
-        folder: 'mymarket-documents',
-        resource_type: 'raw',
-        allowed_formats: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'zip']
-      };
-    }
-    return {
-      folder: 'mymarket-images',
-      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp']
-    };
-  }
-});
+// 메모리에 받은 후 직접 cloudinary로 업로드
+const upload = multer({ storage: multer.memoryStorage() });
 
-const upload = multer({ storage: combinedStorage });
-
-// 이미지 + 문서 동시 업로드 처리
 const uploadFields = upload.fields([
   { name: 'image', maxCount: 1 },
   { name: 'document', maxCount: 1 }
 ]);
+
+// 버퍼를 cloudinary에 업로드
+function uploadToCloudinary(file, options) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(options, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+    stream.end(file.buffer);
+  });
+}
+
+async function uploadImageIfExists(req) {
+  if (req.files && req.files.image && req.files.image[0]) {
+    const result = await uploadToCloudinary(req.files.image[0], {
+      folder: 'mymarket-images'
+    });
+    return result.secure_url;
+  }
+  return null;
+}
+
+async function uploadDocumentIfExists(req) {
+  if (req.files && req.files.document && req.files.document[0]) {
+    const result = await uploadToCloudinary(req.files.document[0], {
+      folder: 'mymarket-documents',
+      resource_type: 'raw'
+    });
+    return result.secure_url;
+  }
+  return null;
+}
 
 // 로그인 체크
 function loginCheck(req, res, next) {
@@ -108,13 +121,8 @@ router.post(
         description
       } = req.body;
 
-      const image = req.files && req.files.image
-        ? req.files.image[0].path
-        : null;
-
-      const document = req.files && req.files.document
-        ? req.files.document[0].path
-        : null;
+      const image = await uploadImageIfExists(req);
+      const document = await uploadDocumentIfExists(req);
 
       await Item.create({
         userId: req.session.user.userId,
@@ -187,12 +195,14 @@ router.post(
         description
       };
 
-      if (req.files && req.files.image) {
-        update.image = req.files.image[0].path;
+      const newImage = await uploadImageIfExists(req);
+      if (newImage) {
+        update.image = newImage;
       }
 
-      if (req.files && req.files.document) {
-        update.document = req.files.document[0].path;
+      const newDocument = await uploadDocumentIfExists(req);
+      if (newDocument) {
+        update.document = newDocument;
       }
 
       await Item.findByIdAndUpdate(
@@ -204,8 +214,10 @@ router.post(
 
     } catch (err) {
 
-      console.error(err);
-      res.status(500).send('상품 수정 중 오류 발생');
+      console.error('=== /items/edit 에러 ===');
+      console.error('message:', err.message);
+      console.error('stack:', err.stack);
+      res.status(500).send('상품 수정 중 오류 발생: ' + err.message);
     }
   }
 );
