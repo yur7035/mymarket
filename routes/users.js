@@ -114,12 +114,16 @@ router.get('/friends', loginCheck, async (req, res) => {
     status: 'pending'
   });
 
+  console.log('현재 로그인 유저:', req.session.user.userId);
+  console.log('받은 친구신청:', requests);
+
   res.render('friends', {
     friends: friendPairs,
     requests,
     error: null,
     success: null
   });
+
 });
 
 // 친구 신청

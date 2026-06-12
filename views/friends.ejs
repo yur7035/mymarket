@@ -4,42 +4,150 @@
 
 <!-- 친구 추가 폼 -->
 <div class="form-card mb-4" style="max-width: 100%;">
-  <h5 class="mb-3">친구 추가</h5>
+  <h5 class="mb-3">친구 신청</h5>
+
   <form action="/users/friends/add" method="POST" class="d-flex gap-2">
-    <input type="text" name="friendId" class="form-control" placeholder="추가할 사용자 아이디 입력">
-    <button class="btn btn-primary" style="white-space:nowrap;">추가</button>
+    <input
+      type="text"
+      name="friendId"
+      class="form-control"
+      placeholder="신청할 사용자 아이디 입력"
+    >
+    <button class="btn btn-primary" style="white-space:nowrap;">
+      신청
+    </button>
   </form>
+
   <% if (error) { %>
-    <div class="alert alert-danger mt-2 mb-0 py-2"><%= error %></div>
+    <div class="alert alert-danger mt-2 mb-0 py-2">
+      <%= error %>
+    </div>
   <% } %>
+
   <% if (success) { %>
-    <div class="alert alert-success mt-2 mb-0 py-2"><%= success %></div>
+    <div class="alert alert-success mt-2 mb-0 py-2">
+      <%= success %>
+    </div>
   <% } %>
 </div>
 
+<!-- 받은 친구 신청 -->
+<h5 class="mb-3">
+  받은 친구 신청
+  <span class="badge bg-warning">
+    <%= requests ? requests.length : 0 %>
+  </span>
+</h5>
+
+<% if (!requests || requests.length === 0) { %>
+
+  <p class="text-muted">
+    받은 친구 신청이 없습니다.
+  </p>
+
+<% } else { %>
+
+  <ul class="list-group mb-4">
+
+    <% requests.forEach(r => { %>
+
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+
+        <div>
+          👤 <strong><%= r.sender %></strong>
+          님이 친구 신청을 보냈습니다.
+        </div>
+
+        <div class="d-flex gap-2">
+
+          <form
+            action="/users/friends/accept/<%= r._id %>"
+            method="POST"
+          >
+            <button class="btn btn-success btn-sm">
+              수락
+            </button>
+          </form>
+
+          <form
+            action="/users/friends/reject/<%= r._id %>"
+            method="POST"
+          >
+            <button class="btn btn-danger btn-sm">
+              거절
+            </button>
+          </form>
+
+        </div>
+
+      </li>
+
+    <% }) %>
+
+  </ul>
+
+<% } %>
+
 <!-- 친구 목록 -->
-<h5>친구 목록 <span class="badge bg-secondary"><%= friends.length %></span></h5>
+<h5>
+  친구 목록
+  <span class="badge bg-secondary">
+    <%= friends.length %>
+  </span>
+</h5>
 
 <% if (friends.length === 0) { %>
-  <p class="text-muted">아직 친구가 없습니다. 친구를 추가해보세요.</p>
+
+  <p class="text-muted">
+    아직 친구가 없습니다.
+  </p>
+
 <% } else { %>
+
   <ul class="list-group">
+
     <% friends.forEach(f => { %>
+
       <li class="list-group-item d-flex justify-content-between align-items-center">
+
         <div>
           <strong>👤 <%= f.userId %></strong>
-          <small class="text-muted ms-2">추가일: <%= new Date(f.addedAt).toLocaleDateString('ko-KR') %></small>
+
+          <small class="text-muted ms-2">
+            추가일:
+            <%= new Date(f.addedAt).toLocaleDateString('ko-KR') %>
+          </small>
         </div>
+
         <div class="d-flex gap-2">
-          <a href="/items?seller=<%= f.userId %>" class="btn btn-sm btn-outline-primary">상품 보기</a>
+
+          <a
+            href="/items?seller=<%= f.userId %>"
+            class="btn btn-sm btn-outline-primary"
+          >
+            상품 보기
+          </a>
+
           <form action="/users/friends/remove" method="POST">
-            <input type="hidden" name="friendId" value="<%= f.userId %>">
-            <button class="btn btn-sm btn-danger">삭제</button>
+            <input
+              type="hidden"
+              name="friendId"
+              value="<%= f.userId %>"
+            >
+
+            <button class="btn btn-sm btn-danger">
+              삭제
+            </button>
           </form>
+
         </div>
+
       </li>
+
     <% }) %>
+
   </ul>
+
 <% } %>
 
 <%- include('partials/footer') %>
