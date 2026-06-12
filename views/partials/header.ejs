@@ -14,15 +14,54 @@
 
     <div>
       <% if (user) { %>
-        <a href="/users/friends" class="btn btn-sm btn-info me-2">친구</a>
-        <a href="/items/write" class="btn btn-sm btn-success me-2">상품 등록</a>
-        <span class="text-white me-3">👤 <%= user.userId %></span>
-        <a href="/users/logout" class="btn btn-sm btn-outline-light">로그아웃</a>
-      <% } else { %>  
+        <button type="button" class="user-menu-trigger" id="userMenuTrigger">
+          👤 <%= user.userId %>
+          <span>▾</span>
+        </button>
+      <% } else { %>
         <a href="/users/login" class="btn btn-sm btn-outline-light">로그인</a>
       <% } %>
     </div>
   </div>
 </nav>
+
+<% if (user) { %>
+<div class="side-panel-overlay" id="sidePanelOverlay"></div>
+<div class="side-panel" id="sidePanel">
+  <div class="side-panel-profile">
+    <div class="side-panel-avatar">👤</div>
+    <div>
+      <p class="side-panel-name"><%= user.userId %></p>
+      <p class="side-panel-sub">내 계정</p>
+    </div>
+  </div>
+  <div class="side-panel-menu">
+    <a href="/users/friends" class="side-panel-item">👥 친구</a>
+    <a href="/items/write" class="side-panel-item">➕ 상품 등록</a>
+    <div class="side-panel-divider"></div>
+    <a href="/users/logout" class="side-panel-item danger">🚪 로그아웃</a>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const trigger = document.getElementById('userMenuTrigger');
+    const panel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+
+    function openPanel() {
+      panel.classList.add('open');
+      overlay.classList.add('open');
+    }
+    function closePanel() {
+      panel.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+
+    trigger.addEventListener('click', openPanel);
+    overlay.addEventListener('click', closePanel);
+  })();
+</script>
+<% } %>
 
 <div class="container mt-4">
