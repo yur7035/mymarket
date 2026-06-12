@@ -13,11 +13,13 @@
             <div class="bg-secondary text-center py-4">이미지 없음</div>
           <% } %>
           <div class="card-body">
-            <span class="badge bg-primary mb-1">친구</span>
-            <h6 class="card-title"><%= item.title %></h6>
-            <p class="card-text mb-1"><%= item.price.toLocaleString() %>원</p>
-            <p class="text-muted small">판매자: <%= item.userId %></p>
-            <a href="/items/<%= item._id %>" class="btn btn-sm btn-outline-primary">상세보기</a>
+            <p class="card-title-line"><%= item.title %></p>
+            <p class="card-price-line"><%= item.price.toLocaleString() %>원</p>
+            <div class="card-meta-row mb-2">
+              <span class="card-meta-time">판매자: <%= item.userId %></span>
+              <span class="card-friend-tag">친구</span>
+            </div>
+            <a href="/items/<%= item._id %>" class="btn btn-sm btn-outline-primary w-100">상세보기</a>
           </div>
         </div>
       </div>
@@ -40,10 +42,13 @@
         <% } %>
 
         <div class="card-body">
-          <h5 class="card-title"><%= item.title %></h5>
-          <p class="card-text"><%= item.price.toLocaleString() %>원</p>
-          <p class="text-muted small">판매자: <%= item.userId %></p>
-          <a href="/items/<%= item._id %>" class="btn btn-primary">상세보기</a>
+          <p class="card-title-line"><%= item.title %></p>
+          <p class="card-price-line"><%= item.price.toLocaleString() %>원</p>
+          <div class="card-meta-row mb-2">
+            <span class="card-meta-time">판매자: <%= item.userId %></span>
+            <span class="card-meta-time"><%= new Date(item.createdAt).toLocaleDateString('ko-KR') %></span>
+          </div>
+          <a href="/items/<%= item._id %>" class="btn btn-primary w-100">상세보기</a>
         </div>
       </div>
     </div>

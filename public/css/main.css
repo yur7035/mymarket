@@ -71,6 +71,42 @@ body {
   color: var(--color-black);
 }
 
+.card-title-line {
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-price-line {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-meta-time {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+.card-friend-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
 .card-text {
   font-weight: 700;
   font-size: 1.05rem;
