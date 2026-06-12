@@ -79,9 +79,17 @@ router.get('/', async (req, res) => {
   const items = await Item.find().sort({ createdAt: -1 });
 
   let friendItems = [];
+  let myItems = [];
 
   if (req.session.user) {
-    const me = await User.findOne({ userId: req.session.user.userId });
+    const me = await User.findOne({ 
+      userId: req.session.user.userId 
+    });
+
+    // 내 상품 목록
+    myItems = await Item.find({
+      userId: req.session.user.userId
+    }).sort({ createdAt: -1 });
 
     if (me && me.friends && me.friends.length > 0) {
       const friendPairs = me.friends.map((id, i) => ({
@@ -99,7 +107,7 @@ router.get('/', async (req, res) => {
     }
   }
 
-  res.render('index', { items, friendItems });
+  res.render('index', { items, friendItems, myItems });
 });
 
 // 상품 등록 폼
