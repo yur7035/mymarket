@@ -14,9 +14,30 @@ const imageStorage = new CloudinaryStorage({
   }
 });
 
-const upload = multer({
-  storage: imageStorage
+const documentStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'mymarket-documents',
+    resource_type: 'raw',
+    allowed_formats: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'zip']
+  }
 });
+
+const upload = multer({
+  storage: multer.memoryStorage()
+});
+
+// 이미지 / 문서 각각 다른 storage로 처리하기 위한 multer 인스턴스
+const imageUpload = multer({ storage: imageStorage });
+const documentUpload = multer({ storage: documentStorage });
+
+// 이미지 + 문서 동시 업로드 처리
+const uploadFields = (req, res, next) => {
+  imageUpload.fields([{ name: 'image', maxCount: 1 }])(req, res, (err) => {
+    if (err) return next(err);
+    documentUpload.fields([{ name: 'document', maxCount: 1 }])(req, res, next);
+  });
+};
 
 // 로그인 체크
 function loginCheck(req, res, next) {
@@ -83,7 +104,7 @@ router.get('/write', loginCheck, (req, res) => {
 router.post(
   '/write',
   loginCheck,
-  upload.single('image'),
+  uploadFields,
   async (req, res) => {
 
     try {
@@ -94,8 +115,12 @@ router.post(
         description
       } = req.body;
 
-      const image = req.file
-        ? req.file.path
+      const image = req.files && req.files.image
+        ? req.files.image[0].path
+        : null;
+
+      const document = req.files && req.files.document
+        ? req.files.document[0].path
         : null;
 
       await Item.create({
@@ -103,7 +128,8 @@ router.post(
         title,
         price,
         description,
-        image
+        image,
+        document
       });
 
       res.redirect('/items');
@@ -138,7 +164,7 @@ router.get('/edit/:id', loginCheck, async (req, res) => {
 router.post(
   '/edit/:id',
   loginCheck,
-  upload.single('image'),
+  uploadFields,
   async (req, res) => {
 
     try {
@@ -165,8 +191,12 @@ router.post(
         description
       };
 
-      if (req.file) {
-        update.image = req.file.path;
+      if (req.files && req.files.image) {
+        update.image = req.files.image[0].path;
+      }
+
+      if (req.files && req.files.document) {
+        update.document = req.files.document[0].path;
       }
 
       await Item.findByIdAndUpdate(

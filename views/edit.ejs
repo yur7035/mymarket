@@ -26,6 +26,16 @@
     </div>
 
     <div class="mb-3">
+      <label>첨부 문서 (새로 올리면 교체됩니다)</label>
+      <% if (item.document) { %>
+        <div class="mb-2">
+          <a href="<%= item.document %>" target="_blank">현재 첨부 문서 보기</a>
+        </div>
+      <% } %>
+      <input type="file" name="document" class="form-control">
+    </div>
+
+    <div class="mb-3">
       <label>설명</label>
       <textarea name="description" class="form-control" rows="5"><%= item.description %></textarea>
     </div>
