@@ -1,11 +1,11 @@
 /* ===== MyMarket 공용 스타일 (모노톤) ===== */
 
 :root {
-  --color-black: #1a1a1a;
-  --color-dark: #2b2b2b;
-  --color-gray-700: #495057;
-  --color-gray-500: #868e96;
-  --color-gray-300: #dee2e6;
+  --color-black: #3a3a3a;
+  --color-dark: #4a4a4a;
+  --color-gray-700: #6b6b6b;
+  --color-gray-500: #9a9a9a;
+  --color-gray-300: #e2e2e2;
   --color-gray-100: #f5f5f5;
   --color-white: #ffffff;
   --radius: 12px;
@@ -20,6 +20,8 @@ body {
 /* ----- 네비게이션 바 ----- */
 .navbar.bg-dark {
   background: var(--color-black) !important;
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
 
 .navbar-brand {
