@@ -81,8 +81,6 @@ body {
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius);
   transition: box-shadow 0.15s, transform 0.15s;
-  max-width: 160px;
-  margin: 0 auto;
 }
 
 .card:hover {
@@ -92,6 +90,11 @@ body {
 
 .card-img-top {
   border-radius: var(--radius) var(--radius) 0 0;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
 }
 
 .card-body {
