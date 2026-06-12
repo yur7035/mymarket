@@ -129,8 +129,11 @@ router.post(
 
     } catch (err) {
 
-      console.error(err);
-      res.status(500).send('상품 등록 중 오류 발생');
+      console.error('=== /items/write 에러 ===');
+      console.error('message:', err.message);
+      console.error('name:', err.name);
+      console.error('stack:', err.stack);
+      res.status(500).send('상품 등록 중 오류 발생: ' + err.message);
     }
   }
 );
